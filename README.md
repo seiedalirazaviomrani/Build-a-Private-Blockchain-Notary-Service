@@ -81,7 +81,7 @@ __Parameters__
 address - The wallet address that you used in the previous step.
 signature - You can take it from the Electrum wallet. Please see the below screenshot
 ```
-<img src="https://github.com/seiedalirazaviomrani/Build-a-Private-Blockchain-Notary-Service/img/img1.png">
+<img src="https://github.com/seiedalirazaviomrani/Build-a-Private-Blockchain-Notary-Service/blob/master/img/img1.png?raw=true">
 
 __Example__
 Post validation with curl
