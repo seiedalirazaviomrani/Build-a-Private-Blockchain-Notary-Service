@@ -2,7 +2,7 @@ const level = require('level');
 const starDB = './stardata';
 const db = level(starDB);
 const bitcoinMessage = require('bitcoinjs-message');
-const verificationTimeWall = 5*60*1000;
+const verificationTimeWall = 5*60*1000; //Five Minutes
 
 class Validation{
 	constructor (req){
@@ -105,41 +105,3 @@ class Validation{
 }
 
 module.exports = Validation
-
-
-
-	// validateAddressParams(){
-	// 	if (!this.req.body.address) {
-	// 		throw new Error("Please add your wallet address!")
-	// 	}
-	// 	return true
-	// }
-
-	// validateSignatureParams(){
-	// 	if (!this.req.bogy.signature) {
-	// 		throw new Error("Please add your signature!")
-	// 	}
-	// }
-
-	// validateNewStarRequest(){
-	// 	const story_length = 500
-	// 	const {star} = this.req.body
-	// 	const {dec, ra, story} = star
-	// 	const isASCII = ((str) => /^[\x00-\x7F]*$/.test(str))
-
-	// 	if (!this.validateAddressParams() || !this.req.body.star) {
-	// 		throw new Error("Please add your wallet address and star parameters!")
-	// 	}
-	// 	if (!story.length || !ra.length || !dec.length ||
-	// 		typeof story !== 'string' || typeof ra !== 'string' || typeof dec !== 'string') {
-	// 		throw new Error("Please input correct data for dec, ra and story!")
-	// 	}
-
-	// 	if (new Buffer(story).length > story_length) {
-	// 		throw new Error("Your star story is too long!")
-	// 	}
-
-	// 	if (!isASCII(story)) {
-	// 		throw new Error("Please enter only ASCII sympols!")
-	// 	}
-	// }

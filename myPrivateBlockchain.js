@@ -104,7 +104,6 @@ class Blockchain{
 			}).on('error', function(err){
 				console.log('Unable to read data stream!', err)
 			}).on('close', function(){
-				//console.log('Block height is ' + (i-1));
 				return resolve(height);
 			});
 		});
@@ -115,18 +114,20 @@ class Blockchain{
 		return await this.getBlockHeight()
 	}
 	// Get block
+	// async getBlock(blockHeight){
+	// 	return await this.getHeight(blockHeight)
+	// }
 	async getBlock(blockHeight){
-		// return new Promise((resolve, reject) =>{
-		// 	db.get(blockHeight, function(err, value){
-		// 		if(err){
-		// 			console.log("Not found!", err);
-		// 			reject(err);
-		// 		} else{
-		// 			resolve(value);
-		// 		}
-		// 	});
-		// }); 
-		return await this.getHeight(blockHeight)
+		return new Promise((resolve, reject) =>{
+			db.get(blockHeight, function(err, value){
+				if(err){
+					console.log("Not found!", err);
+					reject(err);
+				} else{
+					resolve(value);
+				}
+			});
+		}); 
 	}
 	// Validate block
 	validateBlock(blockHeight){

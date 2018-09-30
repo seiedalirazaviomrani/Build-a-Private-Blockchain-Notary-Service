@@ -38,10 +38,11 @@ server.route([
         } else {
             const starValidation = new StarValidation(request)
             const address = request.payload.address
+            const timeStamp = Date.now()
             try{
                 data = await starValidation.getInQueueRequests(address)
             } catch(error) {
-                data = await starValidation.saveRequestValidation(address)
+                data = await starValidation.saveRequestValidation(address, timeStamp)
             }
             return JSON.stringify(data).toString();
         }
@@ -103,7 +104,6 @@ server.route([
             starValidation.deleteAddress(address)
             response.header('Content-Type', 'application/json; charset=utf-8');
             return response;
-            // res.status(201).send(response)
         }
     }},
     { method: 'GET',
@@ -138,22 +138,6 @@ server.route([
             }).code(404) 
         }  
     }}
-    // { method: 'GET',
-    // path: '/stars/{height}',
-    // handler:async function(request,h){
-    //     try{
-    //         const height = encodeURIComponent(request.params.height);
-    //         const block = await blockchain.getBlockByHeight(height)
-    //         const response = h.response(block)
-    //         response.header('Content-Type', 'application/json; charset=utf-8');
-    //         return response;
-    //     } catch(error){
-    //         h.response({
-    //         status: 404, 
-    //         message: "Block Not Found"
-    //         }).code(404) 
-    //     }  
-    // }}
 ]);
 
 // Start the server
@@ -169,6 +153,5 @@ async function start() {
 
     console.log('Server running at:', server.info.uri);
 };
-
 
 start();
