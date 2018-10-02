@@ -1,6 +1,6 @@
 // SHA256 with Crypto-js
 const SHA256 = require('crypto-js/sha256');
-const Block = require('./block')
+const Block = require('./Block')
 // Persist data with LevelDB
 // https://github.com/Level/level
 const level = require('level');

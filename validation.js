@@ -64,21 +64,20 @@ class Validation{
 		})
 	}
 
-	saveRequestValidation(address){
+	saveRequestValidation(address, validationWindowTime){
 		const timeStamp = Date.now()
 		const msg = `${address}:${timeStamp}:starRegistry`
-		const fiveMins = 5*60
 		const data = {
 			address: address,
 			message: msg,
 			requestTimeStamp: timeStamp,
-			validationWindow: fiveMins
+			validationWindow: validationWindowTime
 		}
 		db.put(data.address, JSON.stringify(data))
 		return data
 	}
 
-	async getInQueueRequests(address){
+	async getInQueueRequests(address, validationWindowTime){
 		const expired = value.requestTimeStamp < (Date.now() - verificationTimeWall)
 		return new Promise((resolve, reject) => {
 			db.get(address, (error, value) => {
@@ -95,7 +94,7 @@ class Validation{
 						address: address,
 						message: value.message,
 						requestTimeStamp: value.requestTimeStamp,
-						validationWindow: Math.round((value.requestTimeStamp - (Date.now() - verificationTimeWall))/1000)
+						validationWindow: validationWindowTime
 					}
 					resolve(data)
 				}

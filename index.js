@@ -3,6 +3,11 @@ const myPrivateBlockchain = require('./myPrivateBlockchain');
 const blockchain = new myPrivateBlockchain.Blockchain();
 const Block = require('./Block');
 const StarValidation = require('./validation')
+const fiveMins = 5*60
+const maxStoryLength = 500
+var requests = []
+var startTime
+var validationWindow = fiveMins
 
 'use strict';
 const Hapi=require('hapi');
@@ -38,13 +43,25 @@ server.route([
         } else {
             const starValidation = new StarValidation(request)
             const address = request.payload.address
-            const timeStamp = Date.now()
-            try{
-                data = await starValidation.getInQueueRequests(address)
-            } catch(error) {
-                data = await starValidation.saveRequestValidation(address, timeStamp)
+            if (requests.length>0) {
+                const endTime = new Date()
+                validationWindow = fiveMins - Math.round((endTime - startTime)/1000)
+                if (validationWindow <= 1) {
+                    requests.pop()
+                }
+            } else {
+                startTime = new Date()
+                requests.push(address)
             }
-            return JSON.stringify(data).toString();
+            try{
+                data = await starValidation.getInQueueRequests(address, validationWindow)
+            } catch(error) {
+                data = await starValidation.saveRequestValidation(address, validationWindow)
+            }
+            const response = h.response(data)
+            response.code = (data.code)
+            response.header('Content-Type', 'application/json; charset=utf-8')
+            return response
         }
     }},
     { method: 'POST',
@@ -58,13 +75,17 @@ server.route([
                 const {address, signature} = request.payload
                 const replyMsg = await starValidation.validateMsgSignature(address, signature)
                 if (replyMsg.registerStar) {
-                    return JSON.stringify(replyMsg).toString();
+                    const response = h.response(replyMsg)
+                    response.code = (replyMsg.code)
+                    response.header('Content-Type', 'application/json; charset=utf-8')
+                    return response
                 } else {
                     return h.response(replyMsg).code(401)
                 }
             } catch(error){
                 h.response({
-                    status: 404, message: error.message
+                    status: 404, 
+                    message: error.message
                 }).code(404)
             }
         }
@@ -78,6 +99,20 @@ server.route([
             const starValidation = new StarValidation(request.payload)
             const body = {address, star} = request.payload
             const story = star.story
+            const dec = star.dec
+            const ra = star.ra
+
+            if (new Buffer(story).length > maxStoryLength) {
+                console.log("Your story is too long!")
+                throw new Error("Your story is too long!")
+            }
+
+            if (typeof dec !== 'string' || typeof ra !== 'string' || typeof story !== 'string' || 
+                !dec.length || !ra.length || !story.length) {
+                    console.log("Please enter correct information for 'dec', 'ra' and 'story' properties!")
+                    throw new Error("Please enter correct information for 'dec', 'ra' and 'story' properties!")
+            }   
+
             try{
                 const isValid = await starValidation.addressIsValid()
                 if (!isValid) {
