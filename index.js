@@ -133,7 +133,7 @@ server.route([
                 con: star.con
             }
             await blockchain.addBlock(new Block(body))
-            const blockHeight = await blockchain.getHeight()
+            const blockHeight = await blockchain.getBlockHeight()
             const theNewBlock = await blockchain.getBlock(blockHeight)
             const response = h.response(theNewBlock).code(201)
             starValidation.deleteAddress(address)
