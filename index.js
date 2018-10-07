@@ -43,14 +43,15 @@ server.route([
         } else {
             const starValidation = new StarValidation(request)
             const address = request.payload.address
+            if (validationWindow <= 1) {
+                requests.pop()
+            }
             if (requests.length>0) {
                 const endTime = new Date()
                 validationWindow = fiveMins - Math.round((endTime - startTime)/1000)
-                if (validationWindow <= 1) {
-                    requests.pop()
-                }
             } else {
                 startTime = new Date()
+                validationWindow = fiveMins
                 requests.push(address)
             }
             try{
